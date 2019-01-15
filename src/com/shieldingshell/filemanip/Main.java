@@ -1,10 +1,11 @@
 package com.shieldingshell.filemanip;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Scanner;
-
 
 public class Main {
 
@@ -13,7 +14,7 @@ public class Main {
 		boolean exit = false;
 		Scanner sc = new Scanner(System.in);
 		System.out.println(
-				"What do you want to do (commands : \"cd\", \"ls\", \"mkdir\", \"touch\", \"rm\", \"rd\", \"exit\") ?");
+				"What do you want to do (commands : \"help \", \"cat\", \"cd\", \"ls\", \"mkdir\", \"touch\", \"rm\", \"rd\", \"exit\") ?");
 		while (!exit) {
 			System.out.print(currentDirectory + " : ");
 			String input = sc.nextLine();
@@ -25,13 +26,13 @@ public class Main {
 			} else if (input.equals("exit")) {
 				commande = "exit";
 				param = "";
-			}else if (input.equals("help")) {
+			} else if (input.equals("help")) {
 				commande = "help";
 				param = "";
-			}else {
+			} else {
 				String[] inputSplitted = input.split(" ");
 				commande = inputSplitted[0];
-				param = input.substring(commande.length()+1, input.length());
+				param = input.substring(commande.length() + 1, input.length());
 				System.out.println(param);
 			}
 			switch (commande) {
@@ -39,6 +40,8 @@ public class Main {
 				System.out.println("==============HELP=============");
 				System.out.println("cd directory to go to the specified directory");
 				System.out.println("ls to list the files in this specified directory");
+				System.out.println("cat file to see the content of a file");
+				System.out.println("cp file1 file2 to copy file1 to file2");
 				System.out.println("mkdir directory to create a directory");
 				System.out.println("touch file to create a file");
 				System.out.println("rm file to remove a file");
@@ -50,15 +53,22 @@ public class Main {
 				if (param.equals("..")) {
 					String reg = "\\\\";
 					String[] dirTab = currentDirectory.split(reg);
-					int lenDirTab = dirTab.length-1;
+					int lenDirTab = dirTab.length - 1;
 					String lastFile = dirTab[lenDirTab];
-					currentDirectory = currentDirectory.substring(0,currentDirectory.length()-lastFile.length()-1);
+					currentDirectory = currentDirectory.substring(0, currentDirectory.length() - lastFile.length() - 1);
 				} else {
 					currentDirectory = currentDirectory + "\\" + changeDirectory(param);
 				}
 				break;
 			case "ls":
 				System.out.println(Arrays.toString(listDirectory(currentDirectory)));
+				break;
+			case "cat":
+				readFile(currentDirectory, param);
+				break;
+			case "cp":
+				String[] cpSplitted = param.split(" ");
+				copyFile(currentDirectory, cpSplitted[0], cpSplitted[1]);
 				break;
 			case "mkdir":
 				if (makeDirectory(currentDirectory, param)) {
@@ -143,5 +153,60 @@ public class Main {
 	public static boolean testFile(String fileToTest) {
 		File file = new File(fileToTest);
 		return file.isFile();
+	}
+
+	public static void readFile(String currentDirectory, String fileName) {
+		File fileToRead = new File(currentDirectory + "\\" + fileName);
+		FileInputStream fis = null;
+		try {
+			fis = new FileInputStream(fileToRead);
+			int data;
+			while ((data = fis.read()) >= 0) {
+				System.out.println(data);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (fis != null) {
+				try {
+					fis.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	public static void copyFile(String currentDirectory, String param1, String param2) throws IOException {
+		createFile(currentDirectory, param2);
+		File fileToRead = new File(currentDirectory + "\\" + param1);
+		File fileToWrite = new File(currentDirectory + "\\" + param2);
+		FileInputStream fis = null;
+		FileOutputStream fos = null;
+		try {
+			fis = new FileInputStream(fileToRead);
+			fos = new FileOutputStream(fileToWrite);
+			int data;
+			while ((data = fis.read()) >= 0) {
+				fos.write(data);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (fis != null) {
+				try {
+					fis.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			if (fos != null) {
+				try {
+					fos.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 }
