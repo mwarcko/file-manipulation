@@ -25,13 +25,27 @@ public class Main {
 			} else if (input.equals("exit")) {
 				commande = "exit";
 				param = "";
-			} else {
+			}else if (input.equals("help")) {
+				commande = "help";
+				param = "";
+			}else {
 				String[] inputSplitted = input.split(" ");
 				commande = inputSplitted[0];
 				param = input.substring(commande.length()+1, input.length());
 				System.out.println(param);
 			}
 			switch (commande) {
+			case "help":
+				System.out.println("==============HELP=============");
+				System.out.println("cd directory to go to the specified directory");
+				System.out.println("ls to list the files in this specified directory");
+				System.out.println("mkdir directory to create a directory");
+				System.out.println("touch file to create a file");
+				System.out.println("rm file to remove a file");
+				System.out.println("rd directory to remove a directory");
+				System.out.println("exit to quit");
+				System.out.println("==============HELP=============");
+				break;
 			case "cd":
 				if (param.equals("..")) {
 					String reg = "\\\\";
