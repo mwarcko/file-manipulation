@@ -28,7 +28,8 @@ public class Main {
 			} else {
 				String[] inputSplitted = input.split(" ");
 				commande = inputSplitted[0];
-				param = inputSplitted[1];
+				param = input.substring(commande.length()+1, input.length());
+				System.out.println(param);
 			}
 			switch (commande) {
 			case "cd":
@@ -79,6 +80,7 @@ public class Main {
 				break;
 			case "exit":
 				exit = true;
+				System.out.println("bye bye");
 				break;
 			default:
 				System.out.println("unknow command");
