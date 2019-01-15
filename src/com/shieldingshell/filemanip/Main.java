@@ -8,17 +8,27 @@ import java.util.Scanner;
 public class Main {
 
 	public static void main(String[] args) throws IOException {
-		String currentDirectory = "no directory selected";
+		String currentDirectory = "C:\\ressources";
 		boolean exit = false;
+		Scanner sc = new Scanner(System.in);
 		while (!exit) {
-			Scanner sc = new Scanner(System.in);
 			System.out.println(
 					"What do you want to do (commands : \"cd\", \"ls\", \"mkdir\", \"touch\", \"rm\", \"rd\", \"exit\" ?");
 			System.out.println("You are in the directory : " + currentDirectory);
 			String input = sc.nextLine();
-			String[] inputSplitted = input.split(" ");
-			String commande = inputSplitted[0];
-			String param = inputSplitted[1];
+			String commande = "";
+			String param = "";
+			if (input.equals("ls")) {
+				commande = "ls";
+				param = "";
+			} else if (input.equals("exit")) {
+				commande = "exit";
+				param = "";
+			} else {
+				String[] inputSplitted = input.split(" ");
+				commande = inputSplitted[0];
+				param = inputSplitted[1];
+			}
 			switch (commande) {
 			case "cd":
 				currentDirectory = changeDirectory(param);
@@ -46,19 +56,17 @@ public class Main {
 				}
 				break;
 			case "rm":
-				if (testFile(currentDirectory+"\\"+param)){
+				if (testFile(currentDirectory + "\\" + param)) {
 					removeFile(currentDirectory, param);
-				}else {
+				} else {
 					System.out.println(param + " is not a file");
 				}
 				break;
 			case "rd":
-				if (testFile(currentDirectory+"\\"+param)) {
-					if(removeDirectory(currentDirectory, param)) {
-						System.out.println(param + " directory deleted");
-					}else {
-						System.out.println(param + " directory not empty");
-					}
+				if (removeDirectory(currentDirectory, param)) {
+					System.out.println(param + " directory deleted");
+				} else {
+					System.out.println(param + " directory not empty");
 				}
 				break;
 			case "exit":
@@ -69,8 +77,9 @@ public class Main {
 				break;
 			}
 
-			sc.close();
 		}
+		sc.close();
+
 	}
 
 	public static String changeDirectory(String repo) {
@@ -96,17 +105,17 @@ public class Main {
 		File file = new File(currentDirectory + "\\" + fileNameToCreate);
 		return file.createNewFile();
 	}
-	
+
 	public static boolean removeDirectory(String currentDirectory, String directoryToDelete) {
 		File file = new File(currentDirectory + "\\" + directoryToDelete);
 		return file.delete();
 	}
-	
+
 	public static boolean removeFile(String currentDirectory, String fileToDelete) {
 		File file = new File(currentDirectory + "\\" + fileToDelete);
 		return file.delete();
 	}
-	
+
 	public static boolean testFile(String fileToTest) {
 		File file = new File(fileToTest);
 		return file.isFile();
