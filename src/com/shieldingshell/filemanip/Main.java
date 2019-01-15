@@ -5,16 +5,17 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Scanner;
 
+
 public class Main {
 
 	public static void main(String[] args) throws IOException {
 		String currentDirectory = "C:\\ressources";
 		boolean exit = false;
 		Scanner sc = new Scanner(System.in);
+		System.out.println(
+				"What do you want to do (commands : \"cd\", \"ls\", \"mkdir\", \"touch\", \"rm\", \"rd\", \"exit\") ?");
 		while (!exit) {
-			System.out.println(
-					"What do you want to do (commands : \"cd\", \"ls\", \"mkdir\", \"touch\", \"rm\", \"rd\", \"exit\" ?");
-			System.out.println("You are in the directory : " + currentDirectory);
+			System.out.print(currentDirectory + " : ");
 			String input = sc.nextLine();
 			String commande = "";
 			String param = "";
@@ -27,12 +28,20 @@ public class Main {
 			} else {
 				String[] inputSplitted = input.split(" ");
 				commande = inputSplitted[0];
-				param = inputSplitted[1];
+				param = input.substring(commande.length()+1, input.length());
+				System.out.println(param);
 			}
 			switch (commande) {
 			case "cd":
-				currentDirectory = changeDirectory(param);
-				System.out.println("current directory : " + param);
+				if (param.equals("..")) {
+					String reg = "\\\\";
+					String[] dirTab = currentDirectory.split(reg);
+					int lenDirTab = dirTab.length-1;
+					String lastFile = dirTab[lenDirTab];
+					currentDirectory = currentDirectory.substring(0,currentDirectory.length()-lastFile.length()-1);
+				} else {
+					currentDirectory = currentDirectory + "\\" + changeDirectory(param);
+				}
 				break;
 			case "ls":
 				System.out.println(Arrays.toString(listDirectory(currentDirectory)));
@@ -71,6 +80,7 @@ public class Main {
 				break;
 			case "exit":
 				exit = true;
+				System.out.println("bye bye");
 				break;
 			default:
 				System.out.println("unknow command");
